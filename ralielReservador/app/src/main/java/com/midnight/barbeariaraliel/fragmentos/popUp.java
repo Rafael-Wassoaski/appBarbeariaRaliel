@@ -21,6 +21,7 @@ import com.midnight.barbeariaraliel.asyncTasks.RequestMakerReserva;
 import com.midnight.barbeariaraliel.classes.HorarioAdapter;
 import com.midnight.barbeariaraliel.db.DBSave;
 import com.midnight.barbeariaraliel.interfaces.Meus_horarios_async;
+import com.midnight.barbeariaraliel.interfaces.encerrar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,10 +29,11 @@ import org.json.JSONObject;
 import java.util.HashSet;
 import java.util.Set;
 
-public class popUp extends Activity {
+public class popUp extends Activity implements encerrar {
 
     private static Context context;
     private static int position;
+    private final encerrar acabar = this;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,13 +55,19 @@ public class popUp extends Activity {
             @Override
             public void onClick(View view) {
                 RequestMakerReserva request = new RequestMakerReserva();
-
+                request.encerrar = acabar;
                 request.execute(nome.getText().toString(), id, horartio, obs.getText().toString(), telefone.getText().toString(), telefoneBarber, nomeBarber);
-                finish();
 
             }
         });
 
+    }
+
+    public void acabar(){
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("position", position);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
     }
 
     public static void saveHorario(String msg, JSONObject newJson, int code){
@@ -70,6 +78,7 @@ public class popUp extends Activity {
             db.setDados(newJson);
             db.execute(context);
             //HorarioAdapter.removerReservado(position);
+
         }
     }
 

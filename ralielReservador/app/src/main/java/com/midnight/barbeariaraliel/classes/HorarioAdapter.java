@@ -86,10 +86,14 @@ public class HorarioAdapter extends BaseAdapter {
                     popup.putExtra("dados_hora_telefone", horario.getTelefoneBarbeiro());
                     popup.putExtra("dados_hora_nome", horario.getNomeBarbeiro());
 
-                    act.startActivityForResult(popup, 0);
+                    act.startActivityForResult(popup, 200);
+
+
                 }
             });
         }
+
+
 
         nomeBarbeiro.setText(horario.getNomeBarbeiro());
         hora.setText(horario.getHorario());
@@ -97,7 +101,9 @@ public class HorarioAdapter extends BaseAdapter {
         return view;
     }
 
-    public static void removerReservado(int position){
-        //horarioList.remove(position);
+
+    public void removerReservado(int position){
+        horarioList.remove(position);
+        notifyDataSetChanged();
     }
 }

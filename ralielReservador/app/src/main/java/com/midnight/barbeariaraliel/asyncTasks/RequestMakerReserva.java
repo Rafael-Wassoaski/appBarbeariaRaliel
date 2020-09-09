@@ -8,6 +8,7 @@ import android.util.Log;
 import com.midnight.barbeariaraliel.classes.HorarioAdapter;
 import com.midnight.barbeariaraliel.fragmentos.popUp;
 import com.midnight.barbeariaraliel.interfaces.Meus_horarios_async;
+import com.midnight.barbeariaraliel.interfaces.encerrar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +24,7 @@ import java.net.URL;
 public class RequestMakerReserva extends AsyncTask<String, JSONObject, String> {
 
     public Meus_horarios_async meus_horarios_async;
+    public encerrar encerrar;
 
     public String getHorarios(String nome, String id, String horario, String obs, String telefone, String telefoneBarber, String  nomeBarber){
         BufferedReader reader = null;
@@ -98,6 +100,7 @@ public class RequestMakerReserva extends AsyncTask<String, JSONObject, String> {
             if(newJson.getInt("status") == 200){
 
                 popUp.saveHorario("Horario resevado com sucesso", newJson , 200);
+                encerrar.acabar();
                 //meus_horarios_async.saveHorario(200, newJson);
 
             }else{
