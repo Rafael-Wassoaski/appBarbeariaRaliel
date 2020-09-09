@@ -1,17 +1,22 @@
 package com.midnight.barbeariaraliel.fragmentos;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.midnight.barbeariaraliel.MainActivity;
 import com.midnight.barbeariaraliel.R;
 import com.midnight.barbeariaraliel.asyncTasks.RequestMaker;
 import com.midnight.barbeariaraliel.classes.Horario;
@@ -40,6 +45,7 @@ public class meus_horarios extends Fragment implements Meus_horarios_async {
     private  ListView listView;
     private  HorarioAdapter adapter;
     private View root;
+    private static Context contextMeusHorarios;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -74,6 +80,9 @@ public class meus_horarios extends Fragment implements Meus_horarios_async {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        MainActivity.db.meus_horaios = this;
+        contextMeusHorarios = getContext();
     }
 
     @Override
@@ -83,7 +92,7 @@ public class meus_horarios extends Fragment implements Meus_horarios_async {
         root = inflater.inflate(R.layout.fragment_meus_horarios, container, false);
         listView = (ListView) root.findViewById(R.id.listView_meus_horarios);
         adapter = new HorarioAdapter();
-        adapter.setAct(getActivity());
+        adapter.setAct(this);
         adapter.setLayout(R.layout.seus_horarios_reservados);
         root.findViewById(R.id.sem_horario).setVisibility(View.INVISIBLE);
         DBGet dbGet = new DBGet();
@@ -93,6 +102,16 @@ public class meus_horarios extends Fragment implements Meus_horarios_async {
     }
 
 
+    public void addReserva(final Horario horario){
+
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                adapter.addItem(horario);
+            }
+        });
+
+    }
 
     public void setHorariosReservados(ArrayList horarios, ListView listViewSet){
 

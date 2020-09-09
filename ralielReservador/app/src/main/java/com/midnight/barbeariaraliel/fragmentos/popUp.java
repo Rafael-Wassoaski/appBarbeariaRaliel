@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.room.Room;
 
+import com.midnight.barbeariaraliel.MainActivity;
 import com.midnight.barbeariaraliel.R;
 import com.midnight.barbeariaraliel.asyncTasks.RequestMakerReserva;
 import com.midnight.barbeariaraliel.classes.HorarioAdapter;
@@ -64,6 +65,7 @@ public class popUp extends Activity implements encerrar {
     }
 
     public void acabar(){
+        Log.d("TEste", "removendo");
         Intent returnIntent = new Intent();
         returnIntent.putExtra("position", position);
         setResult(Activity.RESULT_OK, returnIntent);
@@ -74,11 +76,9 @@ public class popUp extends Activity implements encerrar {
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
 
         if(code == 200) {
-            DBSave db = new DBSave();
-            db.setDados(newJson);
-            db.execute(context);
-            //HorarioAdapter.removerReservado(position);
 
+            MainActivity.db.setDados(newJson);
+            MainActivity.db.execute(context);
         }
     }
 

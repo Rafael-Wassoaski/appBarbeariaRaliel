@@ -13,9 +13,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.midnight.barbeariaraliel.db.DBSave;
 import com.midnight.barbeariaraliel.ui.main.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static DBSave db = new DBSave();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

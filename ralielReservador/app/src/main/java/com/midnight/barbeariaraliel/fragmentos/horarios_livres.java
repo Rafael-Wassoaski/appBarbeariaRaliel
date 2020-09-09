@@ -92,7 +92,7 @@ public class horarios_livres extends Fragment implements Horarios_lires_async {
         listViewlivres = (ListView) root.findViewById(R.id.listViewLivres);
         swipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swiperefresh);
         adapterLivres = new HorarioAdapter();
-        adapterLivres.setAct(getActivity());
+        adapterLivres.setAct(this);
         adapterLivres.setLayout(R.layout.horarios_livres_layout);
         root.findViewById(R.id.sem_vagas).setVisibility(View.INVISIBLE);
 
@@ -107,9 +107,11 @@ public class horarios_livres extends Fragment implements Horarios_lires_async {
         return root;
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("TEste", "result");
         if(requestCode == 200){
             if(resultCode == Activity.RESULT_OK){
                 int position = data.getIntExtra("position", -1);

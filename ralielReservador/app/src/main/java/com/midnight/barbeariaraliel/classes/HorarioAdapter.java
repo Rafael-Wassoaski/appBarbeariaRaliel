@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.midnight.barbeariaraliel.R;
@@ -29,11 +30,11 @@ public class HorarioAdapter extends BaseAdapter {
 
     private List<Horario> horarioList = new ArrayList<>();
 
-    public void setAct(Activity act) {
+    public void setAct(Fragment act) {
         this.act = act;
     }
 
-    private Activity act;
+    private Fragment act;
 
     public void setHorarioList(List<Horario> horarioList) {
         this.horarioList = horarioList;
@@ -79,7 +80,7 @@ public class HorarioAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View view) {
                     Log.d("Click", "Clicou " + horarioList.get(position).getHorario());
-                    Intent popup = new Intent(act.getApplicationContext(), popUp.class);
+                    Intent popup = new Intent(act.getContext(), popUp.class);
                     popup.putExtra("dados_horario_position", position);
                     popup.putExtra("dados_horario_id", horario.getIdBarbeiro());
                     popup.putExtra("dados_horario_data", horario.getHorario());
@@ -104,6 +105,12 @@ public class HorarioAdapter extends BaseAdapter {
 
     public void removerReservado(int position){
         horarioList.remove(position);
+        notifyDataSetChanged();
+
+    }
+
+    public void addItem(Horario horario){
+        horarioList.add(horario);
         notifyDataSetChanged();
     }
 }
