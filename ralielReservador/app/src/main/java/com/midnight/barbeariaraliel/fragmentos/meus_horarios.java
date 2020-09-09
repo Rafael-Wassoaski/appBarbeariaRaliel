@@ -1,5 +1,6 @@
 package com.midnight.barbeariaraliel.fragmentos;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -75,6 +76,7 @@ public class meus_horarios extends Fragment implements Meus_horarios_async {
         }
     }
 
+    @android.support.annotation.RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
