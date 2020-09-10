@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,12 +22,15 @@ import com.midnight.barbeariaraliel.ui.main.SectionsPagerAdapter;
 public class MainActivity extends AppCompatActivity {
 
     public static DBSave db = new DBSave();
+    public static String nome = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        nome = getIntent().getExtras().getString("nome");
+        Log.d("NOme", nome);
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);

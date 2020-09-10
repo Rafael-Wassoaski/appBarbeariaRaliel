@@ -29,7 +29,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class LoginActicvity extends AppCompatActivity {
 
@@ -46,6 +48,9 @@ public class LoginActicvity extends AppCompatActivity {
         LoginButton loginButton = findViewById(R.id.login_button);
         loginButton.setReadPermissions( Arrays.asList("email", "public_profile"));
 
+        if(getPreferences().get(0) != null && getPreferences().get(1)!= null){
+            startMain(getPreferences().get(0), getPreferences().get(1));
+        }
 
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -68,7 +73,7 @@ public class LoginActicvity extends AppCompatActivity {
                                     editor.putString("id", id);
                                     if(editor.commit()){
                                         Toast.makeText(getApplicationContext(), "Usário salvo com sucesso", Toast.LENGTH_LONG).show();
-                                        finish();
+
                                     }else{
                                         Toast.makeText(getApplicationContext(), "Erro ao salvar o usuário, tente novamente", Toast.LENGTH_LONG).show();
                                     }
@@ -107,6 +112,23 @@ public class LoginActicvity extends AppCompatActivity {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    private List<String> getPreferences(){
+        List<String> dados = new ArrayList<>();
+        SharedPreferences preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
+        dados.add(preferences.getString("nome", null));
+        dados.add(preferences.getString("id", null));
+        return dados;
+    }
+
+    private void startMain(String name, String id){
+        Intent mainActiviy = new Intent(getBaseContext(), MainActivity.class);
+
+        mainActiviy.putExtra("nome", name);
+        mainActiviy.putExtra("id", id);
+
+        startActivity(mainActiviy);
+        finish();
+    }
     private void tokenHandler(AccessToken token){
         Log.d("Teste", token.toString());
     }

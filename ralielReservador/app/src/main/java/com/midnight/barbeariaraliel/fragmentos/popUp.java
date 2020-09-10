@@ -52,6 +52,10 @@ public class popUp extends Activity implements encerrar {
         Button button = (Button) findViewById(R.id.reservar);
 
 
+        if(MainActivity.nome != null){
+            nome.setText(MainActivity.nome);
+            nome.setClickable(false);
+        }
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
