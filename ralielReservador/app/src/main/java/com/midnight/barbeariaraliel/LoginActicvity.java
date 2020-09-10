@@ -3,9 +3,12 @@ package com.midnight.barbeariaraliel;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -57,8 +60,20 @@ public class LoginActicvity extends AppCompatActivity {
 
                                 // Application code
                                 try {
-                                    String email = object.getString("name");
-                                  Log.d("MDSDOCEU", email);
+                                    String name = object.getString("name");
+                                    String id = object.getString("id");
+                                    SharedPreferences preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = preferences.edit();
+                                    editor.putString("nome", name);
+                                    editor.putString("id", id);
+                                    if(editor.commit()){
+                                        Toast.makeText(getApplicationContext(), "Usário salvo com sucesso", Toast.LENGTH_LONG).show();
+                                        finish();
+                                    }else{
+                                        Toast.makeText(getApplicationContext(), "Erro ao salvar o usuário, tente novamente", Toast.LENGTH_LONG).show();
+                                    }
+
+
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -74,14 +89,15 @@ public class LoginActicvity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                Log.d("vtncfdp", "cancelo");
+
             }
 
             @Override
             public void onError(FacebookException error) {
-                Log.d("vtncfdp", error.toString());
+                Toast.makeText(getApplicationContext(), "Erro ao realizar login, tente novamente", Toast.LENGTH_LONG).show();
             }
         });
+
 
     }
 
