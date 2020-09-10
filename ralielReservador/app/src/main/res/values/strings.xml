@@ -3,6 +3,8 @@
     <string name="tab_text_1">Horários livres</string>
     <string name="tab_text_2">Meus horários</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="facebook_app_id">339513820534138</string> <string name="fb_login_protocol_scheme">fb339513820534138</string>
+    <string name="facebook_app_id">339513820534138</string>
+    <string name="fb_login_protocol_scheme">fb339513820534138</string>
+
 
 </resources>
