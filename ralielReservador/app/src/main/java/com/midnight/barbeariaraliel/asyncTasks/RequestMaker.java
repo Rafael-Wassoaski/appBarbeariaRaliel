@@ -3,12 +3,12 @@ package com.midnight.barbeariaraliel.asyncTasks;
 
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
+import android.os.Handler;
 
 import androidx.annotation.RequiresApi;
 
 import com.midnight.barbeariaraliel.fragmentos.horarios_livres;
-import com.midnight.barbeariaraliel.interfaces.Horarios_lires_async;
+import com.midnight.barbeariaraliel.interfaces.Horarios_livres_async;
 
 import org.json.JSONObject;
 
@@ -21,7 +21,8 @@ import java.net.URL;
 
 public class RequestMaker extends AsyncTask<horarios_livres, JSONObject, String> {
 
-    public Horarios_lires_async response;
+    public Horarios_livres_async response;
+    public Handler handler;
 
     public String getHorarios(){
         BufferedReader reader = null;
@@ -34,8 +35,6 @@ public class RequestMaker extends AsyncTask<horarios_livres, JSONObject, String>
             con.setRequestMethod("GET");
 
             con.setRequestProperty("Content-Type", "application/json; utf-8");
-
-
 
             sb = new StringBuilder();
             reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -76,6 +75,9 @@ public class RequestMaker extends AsyncTask<horarios_livres, JSONObject, String>
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        if(handler != null) {
+            handler.sendEmptyMessage(1);
+        }
         response.setHorarios(s, null);
     }
 }

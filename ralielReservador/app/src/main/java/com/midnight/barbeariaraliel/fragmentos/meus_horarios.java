@@ -1,32 +1,21 @@
 package com.midnight.barbeariaraliel.fragmentos;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.midnight.barbeariaraliel.MainActivity;
 import com.midnight.barbeariaraliel.R;
-import com.midnight.barbeariaraliel.asyncTasks.RequestMaker;
 import com.midnight.barbeariaraliel.classes.Horario;
 import com.midnight.barbeariaraliel.classes.HorarioAdapter;
-import com.midnight.barbeariaraliel.db.DBGet;
-import com.midnight.barbeariaraliel.db.DBSave;
-import com.midnight.barbeariaraliel.interfaces.Horarios_lires_async;
 import com.midnight.barbeariaraliel.interfaces.Meus_horarios_async;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -80,8 +69,6 @@ public class meus_horarios extends Fragment implements Meus_horarios_async {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        MainActivity.db.meus_horaios = this;
         contextMeusHorarios = getContext();
     }
 
@@ -95,9 +82,6 @@ public class meus_horarios extends Fragment implements Meus_horarios_async {
         adapter.setAct(this);
         adapter.setLayout(R.layout.seus_horarios_reservados);
         root.findViewById(R.id.sem_horario).setVisibility(View.INVISIBLE);
-        DBGet dbGet = new DBGet();
-        dbGet.meus_horarios_async = this;
-        dbGet.execute(getActivity().getApplicationContext());
         return root;
     }
 
@@ -131,4 +115,5 @@ public class meus_horarios extends Fragment implements Meus_horarios_async {
             listViewSet.setAdapter(adapter);
         }
     }
+
 }

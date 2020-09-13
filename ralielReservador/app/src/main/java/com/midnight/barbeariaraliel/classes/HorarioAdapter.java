@@ -3,11 +3,14 @@ package com.midnight.barbeariaraliel.classes;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,13 +20,17 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.midnight.barbeariaraliel.MainActivity;
 import com.midnight.barbeariaraliel.R;
+import com.midnight.barbeariaraliel.asyncTasks.RequestMakerCancelHorario;
+import com.midnight.barbeariaraliel.fragmentos.meus_horarios;
 import com.midnight.barbeariaraliel.fragmentos.popUp;
 
 
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.LogRecord;
 
 
 public class HorarioAdapter extends BaseAdapter {
@@ -68,12 +75,38 @@ public class HorarioAdapter extends BaseAdapter {
         View view;
         view = act.getLayoutInflater().inflate(layout, parent, false);
 
+        final Handler handler = new Handler(){
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                int position = msg.getData().getInt("position");
+                removerReservado(position);
+            }
+        };
+
+        final Button cancelButton = (Button) view.findViewById(R.id.cancelButton);
+
+        if(cancelButton!= null){
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    final RequestMakerCancelHorario cancelHorario = new RequestMakerCancelHorario();
+                    cancelHorario.meus_horariosClass = (meus_horarios)act;
+                    cancelHorario.handler = handler;
+                    cancelHorario.execute(horarioList.get(position).getHorario(), horarioList.get(position).getNomeBarbeiro(), MainActivity.id, Integer.toString(position));
+                }
+            });
+        }
+
         final Horario horario = horarioList.get(position);
         TextView nomeBarbeiro = view.findViewById(R.id.Barbeiro);
         final TextView hora = view.findViewById(R.id.Horario);
         TextView barbeiro = view.findViewById(R.id.Cabeleireiro);
         TextView horarioText = view.findViewById(R.id.horarioText);
         FloatingActionButton botta = view.findViewById(R.id.floatingActionButton);
+
+
 
         if(view.findViewById(R.id.floatingActionButton) != null) {
             botta.setOnClickListener(new View.OnClickListener() {
@@ -105,6 +138,10 @@ public class HorarioAdapter extends BaseAdapter {
 
     public void removerReservado(int position){
         horarioList.remove(position);
+        Log.d("Horarios", "size "+horarioList.size());
+        if(horarioList.isEmpty()){
+            horarioList.add(new Horario("Sem horarios", "", ""));
+        }
         notifyDataSetChanged();
 
     }

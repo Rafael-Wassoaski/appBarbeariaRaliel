@@ -2,9 +2,13 @@ package com.midnight.barbeariaraliel.asyncTasks;
 
 
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 
+import com.midnight.barbeariaraliel.MainActivity;
 import com.midnight.barbeariaraliel.classes.HorarioAdapter;
 import com.midnight.barbeariaraliel.fragmentos.popUp;
 import com.midnight.barbeariaraliel.interfaces.Meus_horarios_async;
@@ -23,8 +27,8 @@ import java.net.URL;
 
 public class RequestMakerReserva extends AsyncTask<String, JSONObject, String> {
 
-    public Meus_horarios_async meus_horarios_async;
     public encerrar encerrar;
+    public Handler handler;
 
     public String getHorarios(String nome, String id, String horario, String obs, String telefone, String telefoneBarber, String  nomeBarber){
         BufferedReader reader = null;
@@ -45,6 +49,7 @@ public class RequestMakerReserva extends AsyncTask<String, JSONObject, String> {
             jsonObject.put("data", horario);
             jsonObject.put("obs", obs);
             jsonObject.put("telefone", telefone);
+            jsonObject.put("idUser", MainActivity.id);
             jsonObject.put("nome", nome);
 
             Log.d("JSON", jsonObject.toString());
@@ -97,16 +102,19 @@ public class RequestMakerReserva extends AsyncTask<String, JSONObject, String> {
 
             JSONObject newJson = new JSONObject(s);
             Log.d("Response", newJson.toString());
+            Bundle bundle = new Bundle();
+            Message message = new Message();
             if(newJson.getInt("status") == 200){
-
-                popUp.saveHorario("Horario resevado com sucesso", newJson , 200);
+                bundle.putString("msg", "Horario resevado com sucesso");
                 encerrar.acabar();
                 //meus_horarios_async.saveHorario(200, newJson);
 
             }else{
-                popUp.saveHorario("Falha ao reservar o horario", newJson, 400);
-            }
+                bundle.putString("msg","Falha ao reservar o horario");
 
+            }
+            message.setData(bundle);
+            handler.sendMessage(message);
         } catch (JSONException e) {
             e.printStackTrace();
         }
