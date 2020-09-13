@@ -4,6 +4,7 @@ package com.midnight.barbeariaraliel.asyncTasks;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -18,6 +19,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.net.ssl.HttpsURLConnection;
+
 
 public class RequestMaker extends AsyncTask<horarios_livres, JSONObject, String> {
 
@@ -31,7 +34,7 @@ public class RequestMaker extends AsyncTask<horarios_livres, JSONObject, String>
 
         try {
             URL url = new URL(uri);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
             con.setRequestProperty("Content-Type", "application/json; utf-8");

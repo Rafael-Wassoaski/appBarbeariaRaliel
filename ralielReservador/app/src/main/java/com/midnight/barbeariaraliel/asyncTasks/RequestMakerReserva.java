@@ -9,9 +9,6 @@ import android.util.Log;
 
 
 import com.midnight.barbeariaraliel.MainActivity;
-import com.midnight.barbeariaraliel.classes.HorarioAdapter;
-import com.midnight.barbeariaraliel.fragmentos.popUp;
-import com.midnight.barbeariaraliel.interfaces.Meus_horarios_async;
 import com.midnight.barbeariaraliel.interfaces.encerrar;
 
 import org.json.JSONException;
@@ -23,6 +20,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 public class RequestMakerReserva extends AsyncTask<String, JSONObject, String> {
@@ -38,7 +37,7 @@ public class RequestMakerReserva extends AsyncTask<String, JSONObject, String> {
 
         try {
             URL url = new URL(uri);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             con.setRequestProperty("Accept", "application/json");

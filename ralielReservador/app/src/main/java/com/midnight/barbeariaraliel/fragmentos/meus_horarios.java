@@ -3,19 +3,25 @@ package com.midnight.barbeariaraliel.fragmentos;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.midnight.barbeariaraliel.R;
+import com.midnight.barbeariaraliel.asyncTasks.RequestMakerMeusHorarios;
 import com.midnight.barbeariaraliel.classes.Horario;
 import com.midnight.barbeariaraliel.classes.HorarioAdapter;
-import com.midnight.barbeariaraliel.interfaces.Meus_horarios_async;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -24,7 +30,7 @@ import java.util.ArrayList;
  * Use the {@link meus_horarios#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class meus_horarios extends Fragment implements Meus_horarios_async {
+public class meus_horarios extends Fragment{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,6 +45,8 @@ public class meus_horarios extends Fragment implements Meus_horarios_async {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Handler handler;
+    private RequestMakerMeusHorarios requestMakerMeusHorarios;
 
     public meus_horarios() {
         // Required empty public constructor
@@ -70,6 +78,18 @@ public class meus_horarios extends Fragment implements Meus_horarios_async {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         contextMeusHorarios = getContext();
+        handler = new Handler(){
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                setHorarios(msg.getData().getString("dados"), null);
+            }
+        };
+
+        requestMakerMeusHorarios = new RequestMakerMeusHorarios();
+        requestMakerMeusHorarios.handler = handler;
+        requestMakerMeusHorarios.execute();
+
     }
 
     @Override
@@ -97,23 +117,44 @@ public class meus_horarios extends Fragment implements Meus_horarios_async {
 
     }
 
-    public void setHorariosReservados(ArrayList horarios, ListView listViewSet){
+    public void setHorarios(String json, ListView listViewSet){
+        try {
 
-        ArrayList<Horario> horarioLivres = new ArrayList<>();
-        if(horarios.isEmpty()){
-            Horario horarioLivre = new Horario("Sem horários reservados ", "" , "", 0);
-            horarioLivres.add(horarioLivre);
-            root.findViewById(R.id.com_horarios).setVisibility(View.INVISIBLE);
-            root.findViewById(R.id.sem_horario).setVisibility(View.VISIBLE);
-        }else{
-            horarioLivres = horarios;
+            Log.d("Horarios","Chamou2");
+
+            ArrayList<Horario> horarioLivres = new ArrayList<>();
+
+            if(json == null || json.compareTo("{\"horarios\":[]}") == 1){
+                Horario horarioLivre = new Horario("Sem horários livres", "" , "", -1);
+                horarioLivres.add(horarioLivre);
+            }else {
+
+                JSONObject newJson = new JSONObject(json);
+                Log.d("Token", newJson.isNull("horarios")+"");
+
+
+                for (int horarios = 0; horarios < newJson.getJSONArray("horarios").length(); horarios++) {
+                    Log.d("Horarios", newJson.getJSONArray("horarios").toString());
+
+                    Horario horarioLivre = new Horario(newJson.getJSONArray("horarios").getJSONObject(horarios).getString("hora"),
+                            newJson.getJSONArray("horarios").getJSONObject(horarios).getString("nome"),
+                            newJson.getJSONArray("horarios").getJSONObject(horarios).getString("telefone"),
+                            newJson.getJSONArray("horarios").getJSONObject(horarios).getInt("idBarbeiro"));
+                    horarioLivres.add(horarioLivre);
+                }
+
+                adapter.setHorarioList(horarioLivres);
+                if(listViewSet == null){
+                    listView.setAdapter(adapter);
+                }else{
+                    listViewSet.setAdapter(adapter);
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        adapter.setHorarioList(horarioLivres);
-        if(listViewSet == null){
-            listView.setAdapter(adapter);
-        }else{
-            listViewSet.setAdapter(adapter);
-        }
+
     }
 
 }

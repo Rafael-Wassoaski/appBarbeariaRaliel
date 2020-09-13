@@ -20,6 +20,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class RequestMakerCancelHorario extends AsyncTask<String, String, String> {
 
 
@@ -35,7 +37,7 @@ public class RequestMakerCancelHorario extends AsyncTask<String, String, String>
 
         try {
             URL url = new URL(uri);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
             con.setRequestMethod("DELETE");
             con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             con.setRequestProperty("Accept", "application/json");
