@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/box">
 
     <TextView
         android:id="@+id/Cabeleireiro"
@@ -11,7 +12,7 @@
         android:text="Cabeleireiro"
         android:layout_marginLeft="5dp"/>
     <TextView
-        android:id="@+id/Barbeiro"
+        android:id="@+id/corte"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"

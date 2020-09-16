@@ -6,8 +6,10 @@
     android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-<LinearLayout
+        android:layout_height="match_parent"
+        android:background="@mipmap/fundo_raliel">
+
+        <LinearLayout
     android:id="@+id/com_vagas"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -27,6 +29,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_marginStart="0dp"
+            android:layout_marginTop="20dp"
             android:layout_marginLeft="0dp"
             android:layout_marginEnd="254dp"
             android:layout_marginRight="254dp"
@@ -36,6 +39,7 @@
                 android:id="@+id/sem_horario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/box"
                 android:text="Sem horarios disponiveis"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

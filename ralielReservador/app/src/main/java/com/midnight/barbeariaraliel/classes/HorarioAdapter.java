@@ -1,22 +1,18 @@
 package com.midnight.barbeariaraliel.classes;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -30,7 +26,6 @@ import com.midnight.barbeariaraliel.fragmentos.popUp;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.LogRecord;
 
 
 public class HorarioAdapter extends BaseAdapter {
@@ -100,10 +95,8 @@ public class HorarioAdapter extends BaseAdapter {
         }
 
         final Horario horario = horarioList.get(position);
-        TextView nomeBarbeiro = view.findViewById(R.id.Barbeiro);
+        TextView nomeBarbeiro = view.findViewById(R.id.corte);
         final TextView hora = view.findViewById(R.id.Horario);
-        TextView barbeiro = view.findViewById(R.id.Cabeleireiro);
-        TextView horarioText = view.findViewById(R.id.horarioText);
         FloatingActionButton botta = view.findViewById(R.id.floatingActionButton);
 
 

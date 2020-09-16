@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -24,6 +25,14 @@ import com.facebook.login.widget.LoginButton;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,26 +42,53 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LoginActicvity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private CallbackManager callbackManager;
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("vtncfdp", "aaaaaa");
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.activity_login_acticvity);
-        LoginButton loginButton = findViewById(R.id.login_button);
-        loginButton.setReadPermissions( Arrays.asList("email", "public_profile"));
+        LoginButton loginFacebookButton = findViewById(R.id.login_button);
+        SignInButton loginGoogleButton = findViewById(R.id.googleLoginButton);
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestId()
+                .build();
 
-        if(getPreferences().get(0) != null && getPreferences().get(1)!= null){
+        mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+
+
+        loginGoogleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent signintent = mGoogleSignInClient.getSignInIntent();
+                startActivityForResult(signintent, 0);
+            }
+        });
+
+
+        loginFacebookButton.setReadPermissions( Arrays.asList("email", "public_profile"));
+
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+
+        if(account != null){
             startMain(getPreferences().get(0), getPreferences().get(1));
         }
 
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+
+        if(getSharedPreferences("usuario", MODE_PRIVATE).getBoolean("logged", false)){
+            startMain(getPreferences().get(0), getPreferences().get(1));
+        }
+
+
+
+        loginFacebookButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
 
@@ -62,27 +98,13 @@ public class LoginActicvity extends AppCompatActivity {
                             @Override
                             public void onCompleted(JSONObject object, GraphResponse response) {
                                 Log.v("LoginActivity", response.toString());
-
-                                // Application code
                                 try {
-                                    String name = object.getString("name");
-                                    String id = object.getString("id");
-                                    SharedPreferences preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = preferences.edit();
-                                    editor.putString("nome", name);
-                                    editor.putString("id", id);
-                                    if(editor.commit()){
-                                        Toast.makeText(getApplicationContext(), "Usário salvo com sucesso", Toast.LENGTH_LONG).show();
-
-                                    }else{
-                                        Toast.makeText(getApplicationContext(), "Erro ao salvar o usuário, tente novamente", Toast.LENGTH_LONG).show();
-                                    }
-
-
-
+                                    putCredentials(object.getString("name"),object.getString("id"));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+
+
                             }
                         });
                 Bundle parameters = new Bundle();
@@ -106,9 +128,39 @@ public class LoginActicvity extends AppCompatActivity {
 
     }
 
+
+    private void putCredentials(String name, String id){
+        SharedPreferences preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("nome", name);
+        editor.putString("id", id);
+        editor.putBoolean("logged", true);
+        // Application code
+            if(editor.commit()){
+                Toast.makeText(getApplicationContext(), "Usário salvo com sucesso", Toast.LENGTH_LONG).show();
+                startMain(name, id);
+
+            }else{
+                Toast.makeText(getApplicationContext(), "Erro ao salvar o usuário, tente novamente", Toast.LENGTH_LONG).show();
+            }
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 0){
+          Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                putCredentials(null, account.getId());
+            } catch (ApiException e) {
+                Log.d("GoogleData", e.getMessage());
+                e.printStackTrace();
+            }
+
+
+        }
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 

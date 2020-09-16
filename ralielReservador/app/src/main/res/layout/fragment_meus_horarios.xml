@@ -5,12 +5,14 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".fragmentos.horarios_livres">
+    tools:context=".fragmentos.horarios_livres"
+    android:background="@mipmap/fundo_raliel">
     <LinearLayout
         android:id="@+id/com_horarios"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
     <ListView
         android:id="@+id/listView_meus_horarios"
         android:layout_width="match_parent"
