@@ -1,6 +1,5 @@
 package com.midnight.barbeariaraliel;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -18,13 +17,9 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.login.Login;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -32,12 +27,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +43,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.activity_login_acticvity);
@@ -77,16 +69,9 @@ public class LoginActivity extends AppCompatActivity {
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
-        if(account != null){
-            startMain(getPreferences().get(0), getPreferences().get(1));
+        if(account != null || getSharedPreferences("usuario", MODE_PRIVATE).getBoolean("logged", false)){
+            startMain(getSharedPreferences("usuario", Context.MODE_PRIVATE).getString("id", null));
         }
-
-
-        if(getSharedPreferences("usuario", MODE_PRIVATE).getBoolean("logged", false)){
-            startMain(getPreferences().get(0), getPreferences().get(1));
-        }
-
-
 
         loginFacebookButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -99,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                             public void onCompleted(JSONObject object, GraphResponse response) {
                                 Log.v("LoginActivity", response.toString());
                                 try {
-                                    putCredentials(object.getString("name"),object.getString("id"));
+                                    putCredentials(object.getString("id"));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -128,17 +113,14 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-
-    private void putCredentials(String name, String id){
+    private void putCredentials(String id){
         SharedPreferences preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("nome", name);
         editor.putString("id", id);
-        editor.putBoolean("logged", true);
         // Application code
             if(editor.commit()){
                 Toast.makeText(getApplicationContext(), "Usário salvo com sucesso", Toast.LENGTH_LONG).show();
-                startMain(name, id);
+                startMain(id);
 
             }else{
                 Toast.makeText(getApplicationContext(), "Erro ao salvar o usuário, tente novamente", Toast.LENGTH_LONG).show();
@@ -153,13 +135,11 @@ public class LoginActivity extends AppCompatActivity {
           Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                putCredentials(null, account.getId());
+                putCredentials(account.getId());
             } catch (ApiException e) {
                 Log.d("GoogleData", e.getMessage());
                 e.printStackTrace();
             }
-
-
         }
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
@@ -167,18 +147,25 @@ public class LoginActivity extends AppCompatActivity {
     private List<String> getPreferences(){
         List<String> dados = new ArrayList<>();
         SharedPreferences preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
-        dados.add(preferences.getString("nome", null));
-        dados.add(preferences.getString("id", null));
+        dados.add(preferences.getString("nome", ""));
+        dados.add(preferences.getString("id", ""));
         return dados;
     }
 
-    private void startMain(String name, String id){
-        Intent mainActiviy = new Intent(getBaseContext(), MainActivity.class);
+    private void startMain(String id){
+        Intent activity = null;
+        Log.d("Nome", getSharedPreferences("usuario", Context.MODE_PRIVATE).getAll().toString());
+        if(getSharedPreferences("usuario", Context.MODE_PRIVATE).getString("nome", null) != null){
+            activity = new Intent(getBaseContext(), MainActivity.class);
+            activity.putExtra("nome", getSharedPreferences("usuario", Context.MODE_PRIVATE).getString("nome", null));
+            activity.putExtra("id", id);
+        }else{
+            activity = new Intent(getBaseContext(), RegistroActivity.class);
+        }
 
-        mainActiviy.putExtra("nome", name);
-        mainActiviy.putExtra("id", id);
 
-        startActivity(mainActiviy);
+
+        startActivity(activity);
         finish();
     }
     private void tokenHandler(AccessToken token){

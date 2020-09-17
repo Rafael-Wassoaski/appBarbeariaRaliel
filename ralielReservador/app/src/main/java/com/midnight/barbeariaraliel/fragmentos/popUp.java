@@ -51,6 +51,9 @@ public class popUp extends Activity implements encerrar {
         if(MainActivity.nome != null){
             nome.setText(MainActivity.nome);
             nome.setClickable(false);
+            nome.setFocusable(false);
+            telefone.setText(getSharedPreferences("usuario", MODE_PRIVATE).getString("telefone",  null));
+
         }
         button.setOnClickListener(new View.OnClickListener() {
             @Override
