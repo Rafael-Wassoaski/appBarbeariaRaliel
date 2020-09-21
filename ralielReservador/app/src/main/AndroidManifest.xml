@@ -30,8 +30,7 @@
         </activity>
 
         <service
-            android:name=".CloudMessaging.FirebaseCloudMessanging"
-            android:exported="false">
+            android:name=".MyFirebase">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -40,6 +39,10 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="barberariaRalielApp" />
+
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/icone_notificacao" />
+
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -60,6 +63,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

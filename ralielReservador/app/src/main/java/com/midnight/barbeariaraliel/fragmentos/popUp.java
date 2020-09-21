@@ -1,18 +1,15 @@
 package com.midnight.barbeariaraliel.fragmentos;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,7 +20,11 @@ import com.midnight.barbeariaraliel.MainActivity;
 import com.midnight.barbeariaraliel.R;
 import com.midnight.barbeariaraliel.asyncTasks.RequestMakerReserva;
 
+import com.midnight.barbeariaraliel.classes.BrPhoneNumberFormatter;
+import com.midnight.barbeariaraliel.classes.CorteAdapter;
 import com.midnight.barbeariaraliel.interfaces.encerrar;
+
+import java.lang.ref.WeakReference;
 
 
 public class popUp extends Activity implements encerrar {
@@ -43,9 +44,11 @@ public class popUp extends Activity implements encerrar {
         final String telefoneBarber = intent.getExtras().getString("dados_hora_telefone");
         final String nomeBarber = intent.getExtras().getString("dados_hora_nome");
         final EditText nome = (EditText) findViewById(R.id.nome);
-        final EditText obs = (EditText) findViewById(R.id.obs);
+        final Spinner corte = (Spinner) findViewById(R.id.corte);
         final EditText telefone = (EditText) findViewById(R.id.telefone);
         Button button = (Button) findViewById(R.id.reservar);
+        BrPhoneNumberFormatter formatter = new BrPhoneNumberFormatter(new WeakReference<EditText>(telefone));
+        telefone.addTextChangedListener(formatter);
 
 
         if(MainActivity.nome != null){
@@ -55,6 +58,8 @@ public class popUp extends Activity implements encerrar {
             telefone.setText(getSharedPreferences("usuario", MODE_PRIVATE).getString("telefone",  null));
 
         }
+
+        corte.setAdapter(new CorteAdapter(this));
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,7 +73,7 @@ public class popUp extends Activity implements encerrar {
                 };
                 request.encerrar = acabar;
                 request.handler = handler;
-                request.execute(nome.getText().toString(), id, horartio, obs.getText().toString(), telefone.getText().toString(), telefoneBarber, nomeBarber);
+                request.execute(nome.getText().toString(), id, horartio, Integer.toString(corte.getSelectedItemPosition()+1), telefone.getText().toString(), telefoneBarber, nomeBarber);
 
             }
         });

@@ -80,7 +80,9 @@ public class RequestMaker extends AsyncTask<horarios_livres, JSONObject, String>
         super.onPostExecute(s);
         if(handler != null) {
             handler.sendEmptyMessage(1);
+            response.setHorarios(s, null, 1);
+            return;
         }
-        response.setHorarios(s, null);
+        response.setHorarios(s, null, 0);
     }
 }

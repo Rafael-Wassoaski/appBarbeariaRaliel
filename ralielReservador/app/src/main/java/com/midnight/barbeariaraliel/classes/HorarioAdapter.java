@@ -1,6 +1,8 @@
 package com.midnight.barbeariaraliel.classes;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -25,6 +27,7 @@ import com.midnight.barbeariaraliel.fragmentos.popUp;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -36,10 +39,18 @@ public class HorarioAdapter extends BaseAdapter {
         this.act = act;
     }
 
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
+
+    private Handler handler;
+
     private Fragment act;
 
     public void setHorarioList(List<Horario> horarioList) {
         this.horarioList = horarioList;
+
+        notifyDataSetChanged();
     }
 
     public void setLayout(int layout) {
@@ -63,6 +74,41 @@ public class HorarioAdapter extends BaseAdapter {
         return horarioList.get(position).getIdBarbeiro();
     }
 
+    private String convertMounth(String mounth){
+
+        HashMap<String, String> mounths = new HashMap<>();
+        mounths.put("1", "Janeiro");
+        mounths.put("2", "Fevereiro");
+        mounths.put("3", "Março");
+        mounths.put("4", "Abril");
+        mounths.put("5", "Maio");
+        mounths.put("6", "Junho");
+        mounths.put("7", "Julho");
+        mounths.put("8", "Agosto");
+        mounths.put("9", "Setembro");
+        mounths.put("10", "Outubro");
+        mounths.put("11", "Novembro");
+        mounths.put("12", "Dezembro");
+
+        String formatedDate[] = mounth.split(" ");
+
+        Log.d("HoraFormat", formatedDate[0].split("-")[1]);
+
+        return formatedDate[0].split("-")[2] + " de " + mounths.get(formatedDate[0].split("-")[1]) + " " + formatedDate[1].split(":")[0]+":"+formatedDate[1].split(":")[1];
+    }
+
+    private String getCorte(int indexCorte){
+        List <String> corte = new ArrayList<>();
+        corte.add("Social");
+        corte.add("Degrade");
+        corte.add("Navalhado");
+        corte.add("Sobrancelha na pinca");
+        corte.add("Sobrancelha na Na navalha");
+        corte.add("Barba");
+
+        return corte.get(indexCorte-1);
+    }
+
     @SuppressLint("RestrictedApi")
     @NonNull
     @Override
@@ -79,17 +125,39 @@ public class HorarioAdapter extends BaseAdapter {
             }
         };
 
+
+
         final Button cancelButton = (Button) view.findViewById(R.id.cancelButton);
 
+        horarioList.get(position).setHorarioReservado(convertMounth(horarioList.get(position).getHorario()));
         if(cancelButton!= null){
             cancelButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    final RequestMakerCancelHorario cancelHorario = new RequestMakerCancelHorario();
-                    cancelHorario.meus_horariosClass = (meus_horarios)act;
-                    cancelHorario.handler = handler;
-                    cancelHorario.execute(horarioList.get(position).getHorario(), horarioList.get(position).getNomeBarbeiro(), MainActivity.id, Integer.toString(position));
+                    final AlertDialog.Builder confirmDelete = new AlertDialog.Builder(act.getActivity());
+
+                    confirmDelete.setMessage("Deseja mesmo cancelar este horário?");
+
+                    confirmDelete.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            final RequestMakerCancelHorario cancelHorario = new RequestMakerCancelHorario();
+                            cancelHorario.meus_horariosClass = (meus_horarios)act;
+                            cancelHorario.handler = handler;
+                            cancelHorario.execute(horarioList.get(position).getHorario(), horarioList.get(position).getNomeBarbeiro(), MainActivity.id, Integer.toString(position));
+                        }
+                    });
+
+                    confirmDelete.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    });
+
+                    AlertDialog alertDelete = confirmDelete.create();
+                    alertDelete.show();
                 }
             });
         }
@@ -119,11 +187,11 @@ public class HorarioAdapter extends BaseAdapter {
                 }
             });
         }
-
-
-
         nomeBarbeiro.setText(horario.getNomeBarbeiro());
-        hora.setText(horario.getHorario());
+        hora.setText(horario.getHorarioReservado());
+        if(layout == R.layout.seus_horarios_reservados){
+            nomeBarbeiro.setText(getCorte(horario.getCorteIndex()));
+        }
 
         return view;
     }
@@ -133,11 +201,12 @@ public class HorarioAdapter extends BaseAdapter {
         horarioList.remove(position);
         Log.d("Horarios", "size "+horarioList.size());
         if(horarioList.isEmpty()){
-            horarioList.add(new Horario("Sem horarios", "", ""));
+            handler.sendEmptyMessage(1);
         }
         notifyDataSetChanged();
 
     }
+
 
     public void addItem(Horario horario){
         horarioList.add(horario);

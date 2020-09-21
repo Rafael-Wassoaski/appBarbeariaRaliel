@@ -125,7 +125,7 @@ public class meus_horarios extends Fragment{
             ArrayList<Horario> horarioLivres = new ArrayList<>();
 
             if(json == null || json.compareTo("{\"horarios\":[]}") == 1){
-                Horario horarioLivre = new Horario("Sem horários livres", "" , "", -1);
+                Horario horarioLivre = new Horario("Sem horários livres", "" , "", -1, 1);
                 horarioLivres.add(horarioLivre);
             }else {
 
@@ -139,7 +139,8 @@ public class meus_horarios extends Fragment{
                     Horario horarioLivre = new Horario(newJson.getJSONArray("horarios").getJSONObject(horarios).getString("hora"),
                             newJson.getJSONArray("horarios").getJSONObject(horarios).getString("nome"),
                             newJson.getJSONArray("horarios").getJSONObject(horarios).getString("telefone"),
-                            newJson.getJSONArray("horarios").getJSONObject(horarios).getInt("idBarbeiro"));
+                            newJson.getJSONArray("horarios").getJSONObject(horarios).getInt("idBarbeiro"),
+                            newJson.getJSONArray("horarios").getJSONObject(horarios).getInt("corte"));
                     horarioLivres.add(horarioLivre);
                 }
 

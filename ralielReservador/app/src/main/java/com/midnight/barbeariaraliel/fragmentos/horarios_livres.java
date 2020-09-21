@@ -50,6 +50,7 @@ public class horarios_livres extends Fragment implements Horarios_livres_async {
     private Horarios_livres_async horarios_livres = this;
     private RequestMaker requestMaker;
     private Handler handler;
+    private Handler listViewHandler;
 
     public horarios_livres() {
         // Required empty public constructor
@@ -85,6 +86,15 @@ public class horarios_livres extends Fragment implements Horarios_livres_async {
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
                 swipeRefreshLayout.setRefreshing(false);
+            }
+        };
+
+        listViewHandler = new Handler(){
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                root.findViewById(R.id.com_vagas).setVisibility(View.INVISIBLE);
+                root.findViewById(R.id.sem_vagas).setVisibility(View.VISIBLE);
             }
         };
 
@@ -136,42 +146,36 @@ public class horarios_livres extends Fragment implements Horarios_livres_async {
         }
     }
 
-    public void setHorarios(String json, ListView listViewSet){
+    public void setHorarios(String json, ListView listViewSet, int opc){
         try {
-
-            Log.d("Horarios","Chamou");
-
             ArrayList<Horario> horarioLivres = new ArrayList<>();
 
             if(json == null || json.compareTo("{\"horarios\":[]}") == 1){
-                Horario horarioLivre = new Horario("Sem horários livres", "" , "", -1);
-                horarioLivres.add(horarioLivre);
                 root.findViewById(R.id.com_vagas).setVisibility(View.INVISIBLE);
                 root.findViewById(R.id.sem_vagas).setVisibility(View.VISIBLE);
             }else {
-
+                root.findViewById(R.id.com_vagas).setVisibility(View.VISIBLE);
+                root.findViewById(R.id.sem_vagas).setVisibility(View.INVISIBLE);
                 JSONObject newJson = new JSONObject(json);
-                Log.d("Token", newJson.isNull("horarios")+"");
-
-
                 for (int horarios = 0; horarios < newJson.getJSONArray("horarios").length(); horarios++) {
                     Log.d("Horarios", newJson.getJSONArray("horarios").toString());
 
                     Horario horarioLivre = new Horario(newJson.getJSONArray("horarios").getJSONObject(horarios).getString("hora"),
                             newJson.getJSONArray("horarios").getJSONObject(horarios).getString("nome"),
                             newJson.getJSONArray("horarios").getJSONObject(horarios).getString("telefone"),
-                            newJson.getJSONArray("horarios").getJSONObject(horarios).getInt("idBarbeiro"));
+                            newJson.getJSONArray("horarios").getJSONObject(horarios).getInt("idBarbeiro"),
+                            1);
                     horarioLivres.add(horarioLivre);
                 }
 
                 adapterLivres.setHorarioList(horarioLivres);
+                adapterLivres.setHandler(listViewHandler);
                 if(listViewSet == null){
                     listViewlivres.setAdapter(adapterLivres);
                 }else{
                     listViewSet.setAdapter(adapterLivres);
                 }
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }

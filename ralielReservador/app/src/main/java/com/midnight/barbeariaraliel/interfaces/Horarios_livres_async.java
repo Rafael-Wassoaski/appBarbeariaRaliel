@@ -4,6 +4,6 @@ import android.widget.ListView;
 
 public interface Horarios_livres_async {
 
-    public void setHorarios(String json, ListView listViewSet);
+    public void setHorarios(String json, ListView listViewSet, int opc);
 
 }
